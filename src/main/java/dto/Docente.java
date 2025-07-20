@@ -30,6 +30,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Docente.findAll", query = "SELECT d FROM Docente d"),
     @NamedQuery(name = "Docente.findByCodiDoce", query = "SELECT d FROM Docente d WHERE d.codiDoce = :codiDoce"),
     @NamedQuery(name = "Docente.findByDniDoce", query = "SELECT d FROM Docente d WHERE d.dniDoce = :dniDoce"),
+    @NamedQuery(name = "Docente.buscarxDNI", query = "SELECT d FROM Docente d WHERE d.dniDoce = :dniDoce"),
+    @NamedQuery(name = "Docente.validar", query = "SELECT d FROM Docente d WHERE d.dniDoce = :dniDoce and d.claveDoce = :claveDoce"),
     @NamedQuery(name = "Docente.findByNombDoce", query = "SELECT d FROM Docente d WHERE d.nombDoce = :nombDoce"),
     @NamedQuery(name = "Docente.findByEspecDoce", query = "SELECT d FROM Docente d WHERE d.especDoce = :especDoce"),
     @NamedQuery(name = "Docente.findByFechaIngrDoce", query = "SELECT d FROM Docente d WHERE d.fechaIngrDoce = :fechaIngrDoce"),
@@ -110,6 +112,11 @@ public class Docente implements Serializable {
 
     public void setCodiDoce(Integer codiDoce) {
         this.codiDoce = codiDoce;
+    }
+
+    public Docente(String dniDoce, String claveDoce) {
+        this.dniDoce = dniDoce;
+        this.claveDoce = claveDoce;
     }
 
     public String getDniDoce() {

@@ -1,0 +1,20 @@
+.nuevoInput {
+    border: 1px solid gray; /* Se corrigió la sintaxis */
+    border-radius: 5px;
+    padding: 6px;
+}
+
+.nuevoInput:in-range:not(:placeholder-shown) {
+    border: none;
+    outline: 3px solid green;
+    color: green;
+    background-color: #e8f8e8;
+}
+
+.nuevoInput:out-of-range {
+    border: none;
+    outline: 3px solid red;
+    color: red;
+    background-color: #FFecec;
+}
+

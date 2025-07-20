@@ -1,0 +1,93 @@
+.combito select{
+    width: 200px;
+    height: 30px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.combito{
+    margin-right: 50px;
+}
+
+/*Para separar los imput de modificar*/
+.cola{
+    color: #000;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 7px;
+}
+
+.caja{
+    color: #000;
+    font-weight: bold;
+    margin-left: 100px;
+    margin-top: 7px;
+}
+
+.miboton{
+    margin-left: 100px;
+    width: 150px;
+}
+
+/*Para separar los imput de modificar*/
+.col{
+    margin-bottom: 15px;
+    margin-left: 50px;
+    color: #000;
+    font-weight: bold;
+}
+
+.coled,.colcr{
+    margin-right: 50px;
+}
+
+.modal-title{
+    font-weight: bold;
+}
+
+.modal-body{
+    font-weight: bold;
+    color: #000;
+}
+
+.coled.text{
+    color: #aaa;
+}
+
+.modal-content{
+    align-content: center;
+}
+
+/*Estilos para los encabezados de la tabla*/
+thead th{
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/*Estilos para el contenido de la tabla*/
+tbody td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/*Estilos para los pies de página de la tabla*/
+tfoot th{
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/*Estilos para los encabezados de la tabla*/
+table th{
+    background-color: #adb5bd !important; /*Color para el encabezados de la tabla*/
+    color: #000;
+}
+
+.dt-search{
+    float: right !important;
+    margin-bottom: 20px;
+}
+
+.dt-info{
+    margin-top: 20px !important;
+}
