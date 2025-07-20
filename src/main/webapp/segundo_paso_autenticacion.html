@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Autentificación con Google</title>
+
+        <link href="estilos_harol/segu_paso_autenti.css" rel="stylesheet" type="text/css" />
+
+    <body>
+        <!--Barra superior de perfil-->
+        <div id="topbar">
+            <div id="perfilContenedor" tabindex="0" aria-haspopup="true" aria-expanded="false" role="button"
+                 aria-label="Menú de usuario">
+                <img src="https://cdn-icons-png.flaticon.com/512/64/64572.png" alt="Icono de perfil" />
+                Hola, <span id="nombreUsuario">Usuario</span>
+            </div>
+
+            <div id="perfilMenu" role="menu" aria-label="Opciones de usuario">
+                <ul>
+                    <li class="menuItem" role="menuItem" tabindex="0" id="btnSalir">Salir</li>
+                </ul>
+            </div>
+        </div>
+        <br>
+
+        <div class="container">
+            <h1>Autenticación en dos pasos</h1>
+
+            <img src="img_kevin/logo_autenti_google.png" alt="Autenticación de Google" class="logo-icon">
+
+            <strong>Ingresa el código:</strong>
+            <p>Ingresa a tu aplicación Autenticador de Google en tu teléfono móvil e ingresa el códiigo:</p>
+
+            <input type="text" class="input-codigo" id="codigo" maxlength="6" pattern="\d{6}" placeholder="000000"
+                   inputmode="numeric" autocomplete="one-time-code" required />
+
+            <button id="btnContinuar" disabled>Continuar</button>
+
+            <a href="#" id="btnRegresar" class="button-link">Regresar</a>
+
+        </div>
+
+        <!-- Modal de respuestas -->
+        <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true"
+             aria-describedby="modalDesc">
+            <div class="modal" id="modal">
+                <div class="modal-circle" id="modalIcon">✓</div>
+                <h2 class="modal-title" id="modalTitle">ÉXITO</h2>
+                <p class="modal-message" id="modalDesc">Este es el mensaje de éxito.</p>
+                <button class="modal-button btn-success" id="modalBtn">CONTINUE</button>
+            </div>
+        </div>
+
+        <script>
+            //Funciones para cookies
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i].trim();
+                    if (c.indexOf(nameEQ) === 0)
+                        return decodeURIComponent(c.substring(nameEQ.length));
+                }
+                return null;
+            }
+
+            function setCookie(name, value, days) {
+                const d = new Date();
+                d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/";
+            }
+
+            // Función de cerrar sesión
+            function cerrarSesionYVolver() {
+                setCookie("nombreUsuario", "", -1);
+                setCookie("idUsuarioBD", "", -1);
+                window.location.href = "indexAutenticarKevin.html";
+            }
+
+            // Función para mostrar los mensajes de los modals
+            function showModal(type, message, btnText, btnCallback) {
+                const modalOverlay = document.getElementById('modalOverlay');
+                const modalIcon = document.getElementById('modalIcon');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalDesc = document.getElementById('modalDesc');
+                const modalBtn = document.getElementById('modalBtn');
+                const modal = document.getElementById('modal');
+
+                if (type === 'success') {
+                    modalIcon.textContent = '✓';
+                    modalIcon.className = 'modal-circle modal-success';
+                    modalTitle.textContent = '¡ÉXITO!';
+                    modalBtn.className = 'modal-button btn-success';
+                } else if (type === 'error') {
+                    modalIcon.textContent = '✗';
+                    modalIcon.className = 'modal-circle modal-error';
+                    modalTitle.textContent = '¡ERROR!';
+                    modalBtn.className = 'modal-button btn-error';
+                }
+
+                modalDesc.textContent = message;
+                modalBtn.textContent = btnText || 'Cerrar';
+
+                modalOverlay.style.display = 'flex';
+
+                modalBtn.onclick = () => {
+                    modalOverlay.style.display = 'none';
+                    if (typeof btnCallback === 'function') {
+                        btnCallback();
+                    }
+                };
+            }
+
+            //Obtener cookies
+            let nombre = getCookie("nombreUsuario");
+            let codiUsuario = getCookie("idUsuarioBD");
+
+            document.addEventListener("DOMContentLoaded", () => {
+                //Mostrar nombre de usuario en la barra superior
+                const nombreUsuarioSpan = document.getElementById("nombreUsuario");
+                nombreUsuarioSpan.style.marginLeft = "2px";
+                nombreUsuarioSpan.style.fontWeight = "bold";
+                nombreUsuarioSpan.style.textTransform = "uppercase";
+
+                if (nombre) {
+                    nombreUsuarioSpan.textContent = decodeURIComponent(nombre);
+                } else {
+                    nombreUsuarioSpan.textContent = "Usuario fail";
+                }
+
+            });
+
+            const codigoInput = document.getElementById('codigo');
+            const btnContinuar = document.getElementById('btnContinuar');
+
+            function validarCodigo() {
+                const codigo = codigoInput.value.trim();
+                const esValido = /^\d{6}$/.test(codigo);
+                btnContinuar.disabled = !esValido;
+            }
+
+            codigoInput.addEventListener('input', validarCodigo);
+
+            //Funcion para hacer la validación
+            btnContinuar.addEventListener('click', async () => {
+                const codigo = codigoInput.value.trim();
+
+                try {
+                    const formData = new URLSearchParams();
+                    formData.append("user", codiUsuario);
+                    formData.append("codigo", codigo);
+
+                    const res = await fetch("verificarMFACodigo", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        }
+                    });
+
+                    const data = await res.json();
+
+                    if (data.resultado === "ok") {
+                        //alert("Autenticación completa. Bienvenido.");
+                        showModal("success", "Autenticación completa. Bienvenido.", "Continuar", () => {
+                            window.location.href = "principal.html";
+                        });
+                    } else if (data.resultado === "error") {
+                        //alert("Código inválido, intenta nuevamente.");
+                        showModal("error", "Código inválido, intenta nuevamente.", "Cerrar");
+                        return;
+                    }
+                } catch (error) {
+                    //alert("Error al conectar con el servidor.");
+                    showModal("error", "Error al conectar con el servidor.", "Cerrar");
+                    console.error(error);
+                }
+            });
+        </script>
+
+    </body>
+
+</html>
